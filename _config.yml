@@ -7,6 +7,10 @@ plugins:
   - jekyll-remote-theme
 
 #-------------------------------
+# Google Analytics
+google_analytics: G-0DJRQWBVT7
+
+#-------------------------------
 # General Site Settings
 title: Karen Lee
 description: "Hi I'm Karen, an experienced Client Manager recently upskilled in Data Science.  My portfolio focuses on interesting projects I've recently undertaken, with a strong emphasis on business impact. Please visit my Github & LinkedIn pages (or download my CV) by using the links below!"
