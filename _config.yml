@@ -7,10 +7,6 @@ plugins:
   - jekyll-remote-theme
 
 #-------------------------------
-# Google Analytics
-google_analytics: G-0DJRQWBVT7
-
-#-------------------------------
 # General Site Settings
 title: Karen Lee
 description: "Hi I'm Karen, an experienced Client Manager recently upskilled in Data Science.  My portfolio focuses on interesting projects I've recently undertaken, with a strong emphasis on business impact. Please visit my Github & LinkedIn pages (or download my CV) by using the links below!"
@@ -21,7 +17,7 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 # About Section
 subtitle: Data Science <span style="color:#f58506"> Portfolio </span>
 location: "London, UK"
-resume_url: /docs/
+resume_url: /docs/KarenLee CV Jan 2023.docx
 avatar_image: /img/
 
 #-------------------------------
