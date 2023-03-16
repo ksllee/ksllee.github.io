@@ -16,11 +16,7 @@ Our client, company based in London, is concerned about retaining their high per
     - [Growth/Next Steps](#overview-growth)
 - [01. Data Overview](#data-overview)
 - [02. Modelling Overview](#modelling-overview)
-- [03. Logistic Regression](#logreg-title)
-- [04. Decision Tree](#clftree-title)
-- [05. Random Forest](#rf-title)
-- [06. KNN](#knn-title)
-- [07. Modelling Summary](#modelling-summary)
+- [03. Random Forest](#rf-title)
 - [08. Application](#modelling-application)
 - [09. Growth & Next Steps](#growth-next-steps)
 
@@ -30,69 +26,45 @@ ___
 
 ### Context <a name="overview-context"></a>
 
-Our client, a grocery retailer, sent out mailers in a marketing campaign for their new *delivery club*.  This cost customers $100 per year for membership, and offered free grocery deliveries, rather than the normal cost of $10 per delivery.
+Our client, a company based in London is concerned that their high performing employees are leaving them and have asked us to investigate how retention of such employees can be improved. They have provided us with a dataset containing attributes of its current and past employees and have requested for us to develop a model to predict which of their employees are most at risk of leaving and to understand the drivers behind it. Due to the amount of time spent interviewing and finding replacements for lost employees, the true cost of replacing an employee can often be quite large. Understanding why and when employees are likely to leave can help the company review their recruitment and retention strategy.
 
-For this, they sent mailers to their entire customer base (apart from a control group) but this proved expensive.  For the next batch of communications they would like to save costs by *only* mailing customers that were likely to sign up.
+We will use Machine Learning for this specfic task.
 
-Based upon the results of the last campaign and the customer data available, we will look to understand the *probability* of customers signing up for the *delivery club*.  This would allow the client to mail a more targeted selection of customers, lowering costs, and improving ROI.
-
-Let's use Machine Learning to take on this task!
 <br>
 <br>
 ### Actions <a name="overview-actions"></a>
 
-We firstly needed to compile the necessary data from tables in the database, gathering key customer metrics that may help predict *delivery club* membership.
+With the dataset provided by the client, we found that 84% of employees actually stayed with the company while only 16% left. This is a highly unbalanced dataset but it is also not unusual in most business cases. As we will be predicting a binary output, we will use Random Forest for our classification modelling approach. Random Forest is partcularly good at making predictions if you have a lot of data with many features. It is a robust model using the prediction of many decision trees. Each decision tree looks at a different subset of the data and features and makes its own prediction. The Random Forest algorithm combines all the predictions by taking the majority vote. In addition, Feature Importance from Random Forest will also allow the client to understand the key drivers behind employees leaving. 
 
-Within our historical dataset from the last campaign, we found that 69% of customers did not sign up and 31% did.  This tells us that while the data isn't perfectly balanced at 50:50, it isn't *too* imbalanced either.  Even so, we make sure to not rely on classification accuracy alone when assessing results - also analysing Precision, Recall, and F1-Score.
+As the dataset is highly unbalanced, we will also ensure that we do not rely on the classification accuracy alone when assessing the results. We will also be analysing Precision, Recall and the F1-Score. We will import the data but will need to pre-process the data based on the requirement for the Random Forest algorithm. We will then train and test the model and then measure the predictive performance using Classification Accuracy, Precision, Recall and F1 scores.
 
-As we are predicting a binary output, we tested four classification modelling approaches, namely:
-
-* Logistic Regression
-* Decision Tree
-* Random Forest
-* K Nearest Neighbours (KNN)
-
-For each model, we will import the data in the same way but will need to pre-process the data based up the requirements of each particular algorithm.  We will train & test each model, look to refine each to provide optimal performance, and then measure this predictive performance based on several metrics to give a well-rounded overview of which is best.
 <br>
 <br>
 
 ### Results <a name="overview-results"></a>
 
-The goal for the project was to build a model that would accurately predict the customers that would sign up for the *delivery club*.  This would allow for a much more targeted approach when running the next iteration of the campaign.  A secondary goal was to understand what the drivers for this are, so the client can get closer to the customers that need or want this service, and enhance their messaging.
-
-Based upon these, the chosen the model is the Random Forest as it was a) the most consistently performant on the test set across classication accuracy, precision, recall, and f1-score, and b) the feature importance and permutation importance allows the client an understanding of the key drivers behind *delivery club* signups.
+Random Forest was chosen as the model due to its robustness and that it will allow the client to understand the key drivers behind employees leaving. It's predictive performance are summarised as follows:
 
 <br>
-**Metric 1: Classification Accuracy**
+**Metric 1**
 
-* KNN = 0.936
-* Random Forest = 0.935
-* Decision Tree = 0.929
-* Logistic Regression = 0.866
+Classification Accuracy = 0.893
 
 <br>
-**Metric 2: Precision**
+**Metric 2**
 
-* KNN = 1.00
-* Random Forest = 0.887
-* Decision Tree = 0.885
-* Logistic Regression = 0.784
+Precision = 0.884
 
 <br>
-**Metric 3: Recall**
+**Metric 3**
 
-* Random Forest = 0.904
-* Decision Tree = 0.885
-* KNN = 0.762
-* Logistic Regression = 0.69
+Recall = 0.906
 
 <br>
-**Metric 4: F1 Score**
+**Metric 4**
 
-* Random Forest = 0.895
-* Decision Tree = 0.885
-* KNN = 0.865
-* Logistic Regression = 0.734
+F1 Score = 0.895
+
 <br>
 <br>
 ### Growth/Next Steps <a name="overview-growth"></a>
