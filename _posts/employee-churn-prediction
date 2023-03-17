@@ -182,7 +182,7 @@ We will also investigate the class balance of our dependent variable. This is im
 
 ```python
 # Checking balance of dataset
-data_for_model["Left_Yes"].value_counts(normalize = True
+data_for_model["Left_Yes"].value_counts(normalize = True)
 
 ```
 
@@ -195,7 +195,6 @@ One way of achieving this is using the SMOTETomek sampling method once the data 
 <br>
 ```python
 # Splitting data into X and y objects for modelling
-
 X = data_for_model.drop(["Left_Yes"], axis = 1)
 y = data_for_model["Left_Yes"]
 
@@ -208,7 +207,6 @@ X.shape,y.shape
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42, stratify = y)
 
 ```
-
 In the code above we firstly split our data into an X object which contains only the predictor variables, and a y object that contains only our dependent variable. We then use the SMOTETomek sampling method to create a more balanced dataset.
 
 Once we have done this, we split our data into training and test sets to ensure we can fairly validate the accuracy of the predictions on data that was not used in training. In this case, we have allocated 80% of the data for training, and the remaining 20% for validation. We use the stratfy parameter to ensure that both our training and test sets have the same proportion of employees who stayed in the company or left, meaning that we can be more confident in our assessment of the model's predictive performance.
@@ -238,7 +236,7 @@ clf.fit(X_train, y_train)
 
 ##### Predict On The Test Set
 
-Just like we did with Logistic Regression & our Decision Tree, to assess how well our model is predicting on new data - we use the trained model object (here called *clf*) and ask it to predict the *signup_flag* variable for the test set.
+Just like we did with Logistic Regression & our Decision Tree, to assess how well our model is predicting on new data - we use the trained model object (here called *clf*) and ask it to predict the *Left* variable for the test set.
 
 In the code below we create one object to hold the binary 1/0 predictions, and another to hold the actual prediction probabilities for the positive class.
 
@@ -253,42 +251,63 @@ y_pred_prob = clf.predict_proba(X_test)[:,1]
 <br>
 ##### Confusion Matrix
 
-As we discussed in the above sections - a Confusion Matrix provides us a visual way to understand how our predictions match up against the actual values for those test set observations.
+A Confusion Matrix provides us a visual way to understand how our predictions match up against the actual values for those test set observations.
 
-The below code creates the Confusion Matrix using the *confusion_matrix* functionality from within scikit-learn and then plots it using matplotlib.
+The below code creates and plots the Confusion Matrix using the *ConfusionMatrixDisplay* functionality from within scikit-learn a
 
 ```python
 
-# create the confusion matrix
-conf_matrix = confusion_matrix(y_test, y_pred_class)
-
-# plot the confusion matrix
-plt.style.use("seaborn-poster")
-plt.matshow(conf_matrix, cmap = "coolwarm")
-plt.gca().xaxis.tick_bottom()
+# creates and plots the confusion matrix
+disp = ConfusionMatrixDisplay.from_predictions(y_test, y_pred_class, cmap = "coolwarm")
 plt.title("Confusion Matrix")
 plt.ylabel("Actual Class")
 plt.xlabel("Predicted Class")
-for (i, j), corr_value in np.ndenumerate(conf_matrix):
-    plt.text(j, i, corr_value, ha = "center", va = "center", fontsize = 20)
 plt.show()
 
 ```
 
 <br>
-![alt text](/img/posts/rf-confusion-matrix.png "Random Forest Confusion Matrix")
+![alt text](/img/posts/rf1-confusion-matrix.png "Random Forest Confusion Matrix")
 
 <br>
-The aim is to have a high proportion of observations falling into the top left cell (predicted non-signup and actual non-signup) and the bottom right cell (predicted signup and actual signup).
+The aim is to have a high proportion of observations falling into the top left cell (predicted non-leavers and actual non-leavers) and the bottom right cell (predicted leavers and actual leavers).
 
-Since the proportion of signups in our data was around 30:70 we will again analyse not only Classification Accuracy, but also Precision, Recall, and F1-Score as they will help us assess how well our model has performed from different points of view.
+Since the proportion of leavers in our data was around 16:84 we will analyse the model accuracy not only using Classification Accuracy, but also Precision, Recall, and F1-Score as they will help us assess how well our model has performed from different points of view.
 
 <br>
 ##### Classification Performance Metrics
 <br>
-**Accuracy, Precision, Recall, F1-Score**
+**Classification Accuracy**
 
-For details on these performance metrics, please see the above section on Logistic Regression.  Using all four of these metrics in combination gives a really good overview of the performance of a classification model, and gives us an understanding of the different scenarios & considerations!
+Classification Accuracy is a metric that tells us *of all predicted observations, what proportion did we correctly classify*.  This is very intuitive, but when dealing with imbalanced classes, can be misleading.  
+
+An example of this could be a rare disease. A model with a 98% Classification Accuracy on might appear like a fantastic result, but if our data contained 98% of patients *without* the disease, and 2% *with* the disease - then a 98% Classification Accuracy could be obtained simply by predicting that *no one* has the disease - which wouldn't be a great model in the real world.
+
+In this example of the rare disease, we could define Classification Accuracy as *of all predicted patients, what proportion did we correctly classify as either having the disease, or not having the disease*
+
+<br>
+**Precision & Recall**
+
+Precision is a metric that tells us *of all observations that were predicted as positive, how many actually were positive*
+
+Keeping with the rare disease example, Precision would tell us *of all patients we predicted to have the disease, how many actually did*
+
+Recall is a metric that tells us *of all positive observations, how many did we predict as positive*
+
+Again, referring to the rare disease example, Recall would tell us *of all patients who actually had the disease, how many did we correctly predict*
+
+The tricky thing about Precision & Recall is that it is impossible to optimise both - it's a zero-sum game.  If you try to increase Precision, Recall decreases, and vice versa.  Sometimes however it will make more sense to try and elevate one of them, in spite of the other.  In the case of our rare-disease prediction like we've used in our example, perhaps it would be more important to optimise for Recall as we want to classify as many positive cases as possible.  In saying this however, we don't want to just classify every patient as having the disease, as that isn't a great outcome either!
+
+So - there is one more metric which is actually a *combination* of both.
+
+<br>
+**F1 Score**
+
+F1-Score is a metric that essentially "combines" both Precision & Recall.  Technically speaking, it is the harmonic mean of these two metrics.  A good, or high, F1-Score comes when there is a balance between Precision & Recall, rather than a disparity between them.
+
+Overall, optimising your model for F1-Score means that you'll get a model that is working well for both positive & negative classifications rather than skewed towards one or the other.  To return to the rare disease predictions, a high F1-Score would mean we've got a good balance between successfully predicting the disease when it's present, and not predicting cases where it's not present.
+
+Using all of these metrics in combination gives a really good overview of the performance of a classification model, and gives us an understanding of the different scenarios & considerations!
 
 In the code below, we utilise in-built functionality from scikit-learn to calculate these four metrics.
 
@@ -310,12 +329,11 @@ f1_score(y_test, y_pred_class)
 <br>
 Running this code gives us:
 
-* Classification Accuracy = **0.935** meaning we correctly predicted the class of 93.5% of test set observations
-* Precision = **0.887** meaning that for our *predicted* delivery club signups, we were correct 88.7% of the time
-* Recall = **0.904** meaning that of all *actual* delivery club signups, we predicted correctly 90.4% of the time
+* Classification Accuracy = **0.893** meaning we correctly predicted the class for 89.3% of the test set observations
+* Precision = **0.884** meaning that for our *predicted* leavers, we were correct 88.4% of the time
+* Recall = **0.905** meaning that of all *actual* leavers, we predicted correctly 90.5% of the time
 * F1-Score = **0.895**
 
-These are all higher than what we saw when applying Logistic Regression, and marginally higher than what we got from our Decision Tree.  If we are after out and out accuracy then this would be the best model to choose.  If we were happier with a simpler, easier explain model, but that had almost the same performance - then we may choose the Decision Tree instead!
 
 <br>
 ### Feature Importance <a name="rf-model-feature-importance"></a>
@@ -326,25 +344,13 @@ Because of this, we end up with a powerful and robust model, but because of the 
 
 As we’re using random samples of data, and input variables for each Decision Tree - there are many scenarios where certain input variables are being held back and this enables us a way to compare how accurate the models predictions are if that variable is or isn’t present.
 
-So, at a high level, in a Random Forest we can measure *importance* by asking *How much would accuracy decrease if a specific input variable was removed or randomised?*
+So, at a high level, in a Random Forest, we can measure *importance* by asking *How much would accuracy decrease if a specific input variable was removed or randomised?*
 
 If this decrease in performance, or accuracy, is large, then we’d deem that input variable to be quite important, and if we see only a small decrease in accuracy, then we’d conclude that the variable is of less importance.
 
-At a high level, there are two common ways to tackle this.  The first, often just called **Feature Importance** is where we find all nodes in the Decision Trees of the forest where a particular input variable is used to split the data and assess what the gini impurity score (for a Classification problem) was before the split was made, and compare this to the gini impurity score after the split was made.  We can take the *average* of these improvements across all Decision Trees in the Random Forest to get a score that tells us *how much better* we’re making the model by using that input variable.
+One way of doing this is called **Feature Importance**. This is where we find all nodes in the Decision Trees of the forest where a particular input variable is used to split the data and assess what the gini impurity score (for a Classification problem) was before the split was made, and compare this to the gini impurity score after the split was made.  We can take the *average* of these improvements across all Decision Trees in the Random Forest to get a score that tells us *how much better* we’re making the model by using that input variable.
 
 If we do this for *each* of our input variables, we can compare these scores and understand which is adding the most value to the predictive power of the model!
-
-The other approach, often called **Permutation Importance** cleverly uses some data that has gone *unused* at when random samples are selected for each Decision Tree (this stage is called "bootstrap sampling" or "bootstrapping")
-
-These observations that were not randomly selected for each Decision Tree are known as *Out of Bag* observations and these can be used for testing the accuracy of each particular Decision Tree.
-
-For each Decision Tree, all of the *Out of Bag* observations are gathered and then passed through.  Once all of these observations have been run through the Decision Tree, we obtain a classification accuracy score for these predictions.
-
-In order to understand the *importance*, we *randomise* the values within one of the input variables - a process that essentially destroys any relationship that might exist between that input variable and the output variable - and run that updated data through the Decision Tree again, obtaining a second accuracy score.  The difference between the original accuracy and the new accuracy gives us a view on how important that particular variable is for predicting the output.
-
-*Permutation Importance* is often preferred over *Feature Importance* which can at times inflate the importance of numerical features. Both are useful, and in most cases will give fairly similar results.
-
-Let's put them both in place, and plot the results...
 
 <br>
 ```python
@@ -363,37 +369,15 @@ plt.xlabel("Feature Importance")
 plt.tight_layout()
 plt.show()
 
-# calculate permutation importance
-result = permutation_importance(clf, X_test, y_test, n_repeats = 10, random_state = 42)
-permutation_importance = pd.DataFrame(result["importances_mean"])
-feature_names = pd.DataFrame(X.columns)
-permutation_importance_summary = pd.concat([feature_names,permutation_importance], axis = 1)
-permutation_importance_summary.columns = ["input_variable","permutation_importance"]
-permutation_importance_summary.sort_values(by = "permutation_importance", inplace = True)
-
-# plot permutation importance
-plt.barh(permutation_importance_summary["input_variable"],permutation_importance_summary["permutation_importance"])
-plt.title("Permutation Importance of Random Forest")
-plt.xlabel("Permutation Importance")
-plt.tight_layout()
-plt.show()
-
 ```
 <br>
-That code gives us the below plots - the first being for *Feature Importance* and the second for *Permutation Importance*!
+That code gives us the plot as seen below:
 
 <br>
-![alt text](/img/posts/rf-classification-feature-importance.png "Random Forest Feature Importance Plot")
-<br>
-<br>
-![alt text](/img/posts/rf-classification-permutation-importance.png "Random Forest Permutation Importance Plot")
+![alt text](/img/posts/rf2-classification-feature-importance.png "Random Forest Feature Importance Plot")
 
 <br>
-The overall story from both approaches is very similar, in that by far, the most important or impactful input variables are *distance_from_store* and *transaction_count*
-
-Surprisingly, *average_basket_size* was not as important as hypothesised.
-
-There are slight differences in the order or "importance" for the remaining variables but overall they have provided similar findings.
+It appears that Age, Job Satisfaction and Job Experience (Total Working Years, Years at Company) are the top 4 drivers in explaining employee churn.
 
 ___
 <br>
