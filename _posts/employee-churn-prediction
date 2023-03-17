@@ -182,67 +182,39 @@ We will also investigate the class balance of our dependent variable. This is im
 
 ```python
 # Checking balance of dataset
-data_for_model["Left_Yes"].value_counts(normalize = True)
+data_for_model["Left_Yes"].value_counts(normalize = True
+
 ```
-##### SMOTETomek sampling
-The dataset is found to be imbalanced with 84% of employees staying and only 16% choosing to leave the company. When a dataset is imbalanced, it will lead to bias during model training with the class containing a higher number of samples preferred more over the calss containing a lower number of samples. In order to overcome this bias of the model, we nee to make the dataset balanced containing an approximately equal number of samples in both classes.
 
 <br>
-##### Split Out Data For Modelling
+##### SMOTETomek Sampling and Splitting Data For Modelling
+The dataset is found to be imbalanced with 84% of employees staying and only 16% choosing to leave the company. When a dataset is imbalanced, it will lead to bias during model training with the class containing a higher number of samples (in this case, No) preferred more over the class containing a lower number of samples (Yes). In order to overcome this bias of the model, we need to make the dataset balanced, containing an approximately equal number of samples in both classes.
 
-In exactly the same way we did for both Logistic Regression & our Decision Tree, in the next code block we do two things, we firstly split our data into an X object which contains only the predictor variables, and a y object that contains only our dependent variable.
-
-Once we have done this, we split our data into training and test sets to ensure we can fairly validate the accuracy of the predictions on data that was not used in training. In this case, we have allocated 80% of the data for training, and the remaining 20% for validation. Again, we make sure to add in the stratify parameter to ensure that both our training and test sets have the same proportion of customers who did, and did not, sign up for the delivery club - meaning we can be more confident in our assessment of predictive performance.
+One way of achieving this is using the SMOTETomek sampling method once the data has been split out for modelling. SMOTETomek works by combining two methods; SMOTE and Tomek links. SMOTE creates new synthetic examples of the minority class by interpolating between existing examples. Tomek links identify pairs of examples from the different classes that are very close to each other and they are removed from the dataset.
 
 <br>
 ```python
+# Splitting data into X and y objects for modelling
 
-# split data into X and y objects for modelling
-X = data_for_model.drop(["signup_flag"], axis = 1)
-y = data_for_model["signup_flag"]
+X = data_for_model.drop(["Left_Yes"], axis = 1)
+y = data_for_model["Left_Yes"]
+
+# Using SMOTETomek to sample to create a balanced dataset
+smk = SMOTETomek()
+X,y=smk.fit_resample(X,y)
+X.shape,y.shape
 
 # split out training & test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42, stratify = y)
 
 ```
 
-<br>
-##### Categorical Predictor Variables
+In the code above we firstly split our data into an X object which contains only the predictor variables, and a y object that contains only our dependent variable. We then use the SMOTETomek sampling method to create a more balanced dataset.
 
-In our dataset, we have one categorical variable *gender* which has values of "M" for Male, "F" for Female, and "U" for Unknown.
-
-Just like the Logistic Regression algorithm, Random Forests cannot deal with data in this format as it can't assign any numerical meaning to it when looking to assess the relationship between the variable and the dependent variable.
-
-As *gender* doesn't have any explicit *order* to it, in other words, Male isn't higher or lower than Female and vice versa - we would again apply One Hot Encoding to the categorical column.
+Once we have done this, we split our data into training and test sets to ensure we can fairly validate the accuracy of the predictions on data that was not used in training. In this case, we have allocated 80% of the data for training, and the remaining 20% for validation. We use the stratfy parameter to ensure that both our training and test sets have the same proportion of employees who stayed in the company or left, meaning that we can be more confident in our assessment of the model's predictive performance.
 
 <br>
-```python
 
-# list of categorical variables that need encoding
-categorical_vars = ["gender"]
-
-# instantiate OHE class
-one_hot_encoder = OneHotEncoder(sparse=False, drop = "first")
-
-# apply OHE
-X_train_encoded = one_hot_encoder.fit_transform(X_train[categorical_vars])
-X_test_encoded = one_hot_encoder.transform(X_test[categorical_vars])
-
-# extract feature names for encoded columns
-encoder_feature_names = one_hot_encoder.get_feature_names_out(categorical_vars)
-
-# turn objects back to pandas dataframe
-X_train_encoded = pd.DataFrame(X_train_encoded, columns = encoder_feature_names)
-X_train = pd.concat([X_train.reset_index(drop=True), X_train_encoded.reset_index(drop=True)], axis = 1)
-X_train.drop(categorical_vars, axis = 1, inplace = True)
-
-X_test_encoded = pd.DataFrame(X_test_encoded, columns = encoder_feature_names)
-X_test = pd.concat([X_test.reset_index(drop=True), X_test_encoded.reset_index(drop=True)], axis = 1)
-X_test.drop(categorical_vars, axis = 1, inplace = True)
-
-```
-
-<br>
 ### Model Training <a name="rf-model-training"></a>
 
 Instantiating and training our Random Forest model is done using the below code.  We use the *random_state* parameter to ensure we get reproducible results, and this helps us understand any improvements in performance with changes to model hyperparameters.
