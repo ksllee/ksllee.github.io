@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Enhancing Targeting Accuracy Using ML
-image: ""
-tags: [Employee Churn Prediction, Machine Learning, Classification, Python]
+title: Predicting Employee Churn Using ML
+image: "/posts/employeechurn-title-img.png"
+tags: [Employee Churn Prediction, HR Analytics, Machine Learning, Classification, Python]
 ---
 
 Our client, company based in London, is concerned about retaining their high performing employees and wants to utilise Machine Learning to predict exactly which of its employees are most at risk of leaving.
@@ -17,8 +17,8 @@ Our client, company based in London, is concerned about retaining their high per
 - [01. Data Overview](#data-overview)
 - [02. Modelling Overview](#modelling-overview)
 - [03. Random Forest](#rf-title)
-- [08. Application](#modelling-application)
-- [09. Growth & Next Steps](#growth-next-steps)
+- [04. Application](#modelling-application)
+- [05. Growth & Next Steps](#growth-next-steps)
 
 ___
 
