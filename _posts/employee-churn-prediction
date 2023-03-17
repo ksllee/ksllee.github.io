@@ -71,7 +71,7 @@ F1 Score = 0.895
 
 While predictive accuracy was relatively high - other modelling approaches could be tested, especially those somewhat similar to Random Forest, for example XGBoost, LightGBM to see if even more accuracy could be gained.
 
-From a data point of view, further variables could be collected, and further feature engineering could be undertaken to ensure that we have as much useful information available for predicting customer loyalty
+From a data point of view, further variables could be collected, and further feature engineering could be undertaken to ensure that we have as much useful information available for predicting employee churn.
 <br>
 <br>
 ___
@@ -90,39 +90,33 @@ After this data pre-processing in Python, we have a dataset for modelling that c
 
 | **Variable Name** | **Variable Type** | **Description** |
 |---|---|---|
-| signup_flag | Dependent | A binary variable showing if the customer signed up for the delivery club in the last campaign |
-| distance_from_store | Independent | The distance in miles from the customers home address, and the store |
-| gender | Independent | The gender provided by the customer |
-| credit_score | Independent | The customers most recent credit score |
-| total_sales | Independent | Total spend by the customer in ABC Grocery - 3 months pre campaign |
-| total_items | Independent | Total products purchased by the customer in ABC Grocery - 3 months pre campaign |
-| transaction_count | Independent | Total unique transactions made by the customer in ABC Grocery - 3 months pre campaign |
-| product_area_count | Independent | The number of product areas within ABC Grocery the customers has shopped into - 3 months pre campaign |
-| average_basket_value | Independent | The average spend per transaction for the customer in ABC Grocery - 3 months pre campaign |
+| left | Dependent | A binary variable showing if the employee left the company or not |
+| Gender | Independent | The gender of the employee |
+| MonthlyIncome | Independent | The monthly income of the employee, categorised as low, medium or high |
+| Department | Independent | The department the employee belonged to |
+| NumCompaniesWorked | Independent | The total number companies the employee has worked in |
+| Over18 | Independent | If the employee is over 18, categorised as Yes or No |
+| workingfromhome | Independent | If the employee has the option of working from home or not, categorised as Yes or No |
+| BusinessTravel | Independent | How frequently the employee travels for work, categorised as Travel_Rarely, Travel_Frequently or Non_Travel |
+| DistanceFromHome | Independent | The distance in miles the employee lives from their work place |
+| StandardHours | Independent | The number of working hours per week |
+| JobSatisfaction | Independent | The job satisfaction score of the employee, with 1 as the lowest and 4 as the highest score |
+| complaintfiled | Independent | If the employee has ever filed a complaint with the company |
+| PercentSalaryHike | Independent | The most recent percentage salary increase of the employee |
+| PerformanceRating | Independent | The employee's most recent performance rating, with 1 as the lowest and 5 as the highest score |
+| TotalWorkingYears | Independent | The employee's total number of working experience |
+| YearsAtCompany | Independent | The employee's tenure in years in the company |
+| YearsSinceLastPromotion | Independent | The number of years lapsed sinced the employee was last promoted |
 
 <br>
 # Modelling Overview  <a name="modelling-overview"></a>
 
-We will build a model that looks to accurately predict *signup_flag*, based upon the customer metrics listed above.
+We will build a model that looks to accurately predict *leave*, based upon the employee data listed above.
 
-If that can be achieved, we can use this model to predict signup & signup probability for future campaigns.  This information can be used to target those more likely to sign-up, reducing marketing costs and thus increasing ROI.
+If that can be achieved, we can use this model to predict the probability of future employee leaving, allowing the company to act, minimising the chance of the company losing a good employee. 
 
-As we are predicting a binary output, we tested three classification modelling approaches, namely:
+As we are predicting a binary output and due to the unbalanced nature of the dataset, we will be using the Decision Tree algorithm.
 
-* Logistic Regression
-* Decision Tree
-* Random Forest
-
-<br>
-# Logistic Regression <a name="logreg-title"></a>
-
-We utlise the scikit-learn library within Python to model our data using Logistic Regression. The code sections below are broken up into 5 key sections:
-
-* Data Import
-* Data Preprocessing
-* Model Training
-* Performance Assessment
-* Optimal Threshold Analysis
 
 <br>
 ### Data Import <a name="logreg-import"></a>
